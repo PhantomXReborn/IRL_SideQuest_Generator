@@ -92,4 +92,102 @@ export default function RealLifeSideQuest() {
         })
     };
 
-};
+    const completeQuest = () => {
+        if (!quest) return;
+        setXp(prev => prev + quest.reward.xp);
+        setStreak(prev => prev + 1);
+        setQuest(null); 
+    };
+
+    const difficultyColor =
+        difficulty === "Normal"
+        ? "bg-blue-500"
+        : difficulty === "Hard"
+        ? "bg-orange-500"
+        : "bg-red-600";
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6 flex flex-col items-center">
+            <motion.h1
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl font-bold mb-4 flex items-center gap-2"
+            >
+                <Sparkles className="text-purple-400" /> Real-Life Side Quest
+            </motion.h1>
+
+
+            <Card className="w-full max-w-xl bg-gray-800/70 backdrop-blur-xl shadow-2xl rounded-2xl p-4">
+                <CardContent className="space-y-4">
+                    <div>
+                        <p className="text-sm text-gray-400">Level {level}</p>
+                        <Progress value={(xp % 50) * 2} />
+                        <p className="text-xs text-gray-500 mt-1">XP: {xp}</p>
+                    </div>
+
+
+                    <div className="flex justify-between items-center">
+                        <p className="flex items-center gap-2">
+                            <Flame className="text-orange-400" /> Streak: {streak}
+                        </p>
+                        <div className="flex gap-2">
+                            {["Normal", "Hard", "Extreme"].map(mode => (
+                                <Button
+                                    key={mode}
+                                    onClick={() => setDifficulty(mode)}
+                                    className={`${difficulty === mode ? difficultyColor : "bg-gray-700"} rounded-xl`}
+                                >
+                                    {mode}
+                                </Button>
+                            ))}
+                        </div>
+                    </div>
+
+
+                    <Button
+                        onClick={generateQuest}
+                        className="w-full rounded-2xl text-lg bg-purple-600 hover:bg-purple-700"
+                    >
+                        Generate Quest
+                    </Button>
+
+                    <AnimatePresence mode="wait">
+                        {quest && (
+                            <motion.div
+                                key={quest.objective}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-gray-900 p-4 rounded-2xl shadow-xl"
+                            >
+                                <p className="text-lg font-semibold">🎯 {quest.objective} {quest.location}</p>
+                                <p className="text-sm text-gray-400 mt-2">Bonus: Complete it {quest.twist}</p>
+                                <p className="text-green-400 mt-3 flex items-center gap-2">
+                                    <Trophy size={16} /> Reward: {quest.reward.label} (+{quest.reward.xp} XP)
+                                </p>
+                                <Button
+                                    onClick={completeQuest}
+                                    className="w-full mt-4 bg-green-600 hover:bg-green-700 rounded-2xl"
+                                >
+                                    Complete Quest
+                                </Button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </CardContent>
+            </Card>
+
+
+            {difficulty === "Extreme" && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-6 text-red-500 flex items-center gap-2"
+                >
+                    <Skull /> Extreme Mode Active — Higher Risk. Higher Growth.
+                </motion.div>
+            )}
+        </div>
+    );
+}
