@@ -77,5 +77,19 @@ export default function RealLifeSideQuest() {
         setLevel(newLevel);
     }, [xp]);
 
-    
-}
+    const generateQuest = () => {
+        const reward = getRandom(rewards);
+        const multiplier = difficulty === "Hard" ? 2 : difficulty === "Extreme" ? 3 : 1;
+
+        setQuest({
+            objective: getRandom(objectives),
+            location: getRandom(locations),
+            twist: getRandom(twists),
+            reward: {
+                xp: reward.xp * multiplier,
+                label: reward.label
+            }
+        })
+    };
+
+};
